@@ -1,0 +1,17 @@
+data/processed/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+*.pt
+.env
+.venv/
+data/fires/
+data/mtbs/
+results/preds/
+results/*.pt
+paper/*.aux
+paper/*.log
+paper/*.bbl
+paper/*.blg
+paper/*.out
+data/fires.gpkg

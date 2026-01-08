@@ -1,0 +1,41 @@
+[22:53:18] fetch workers stopped early; retrying missing fires
+[22:53:22] august_complex_2020: exists, skipping
+[22:53:23] dixie_2021: grid 3814x3926 px
+[22:53:29]   scene 804403220220714 missing on Planetary Computer; using LC09_L2SP_044032_20220722_02_T1
+[23:07:55] dixie_2021: 4,372,984 labeled px; unburned/low/mod/high = 13.3% / 32.1% / 29.9% / 24.6%; LC08_L2SP_044032_20200708_02_T1 -> LC09_L2SP_044032_20220722_02_T1
+[23:07:55] ranch_2018: exists, skipping
+[23:07:55] bootleg_2021: grid 2055x2092 px
+[23:07:57]   scene 804403020220714 missing on Planetary Computer; using LC09_L2SP_044030_20220722_02_T1
+[23:08:48] bootleg_2021: 1,857,568 labeled px; unburned/low/mod/high = 24.6% / 22.7% / 29.0% / 23.7%; LC08_L2SP_044030_20210625_02_T1 -> LC09_L2SP_044030_20220722_02_T1
+[23:08:48] creek_2020: exists, skipping
+[23:08:48] north_complex_2020: exists, skipping
+[23:08:48] hennessey_2020: exists, skipping
+[23:08:48] carr_2018: exists, skipping
+[23:08:48] caldor_2021: exists, skipping
+[23:08:48] monument_2021: exists, skipping
+[23:08:48] haypress_2021: exists, skipping
+[23:08:48] klondike_2018: exists, skipping
+[23:08:48] castle_2020: exists, skipping
+[23:08:48] holiday_farm_2020: exists, skipping
+[23:08:48] camp_2018: exists, skipping
+[23:08:48] antelope_2021: exists, skipping
+[23:08:48] riverside_2020: exists, skipping
+[23:08:48] archie_creek_2020: exists, skipping
+[23:08:48] dolan_2020: exists, skipping
+[23:08:48] mcfarland_2021: exists, skipping
+[23:08:48] bobcat_2020: exists, skipping
+[23:08:48] windy_2021: exists, skipping
+[23:08:48] ferguson_2018: exists, skipping
+[23:08:48] mccash_2021: exists, skipping
+[23:08:48] knp_complex_2021: exists, skipping
+[23:08:48] czu_aug_lightning_2020: exists, skipping
+[23:08:48] w_5_cold_springs_2020: exists, skipping
+[23:08:48] tamarack_2021: exists, skipping
+[23:08:48] glass_2020: exists, skipping
+[23:08:48] delta_2018: exists, skipping
+[23:08:48] watson_creek_2018: exists, skipping
+[23:09:18] all 31 fires downloaded
+[23:09:18] training unet_bands_idx
+[01:02:59] training unet_bands
+[02:53:16] running report
+[02:53:24] ALL DONE

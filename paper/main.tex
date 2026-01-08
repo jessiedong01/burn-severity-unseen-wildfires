@@ -1,0 +1,333 @@
+\documentclass[10pt]{article}
+\usepackage[letterpaper, margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage[numbers]{natbib}
+\usepackage{floatrow}
+\floatsetup[table]{capposition=top}
+\floatsetup[figure]{capposition=bottom}
+\usepackage[labelsep=colon]{caption}
+\usepackage{url}
+\definecolor{linkblue}{rgb}{0.0, 0.33, 0.71}
+\usepackage[colorlinks=true, citecolor=linkblue, linkcolor=linkblue, urlcolor=linkblue]{hyperref}
+\usepackage[capitalize,noabbrev]{cleveref}
+
+\setlength{\emergencystretch}{1.5em}
+\input{numbers}
+\input{numbers_analysis}
+
+\title{Burn-Severity Mapping for Unseen Wildfires\\is Limited by Per-Fire Threshold Calibration}
+
+\author{Jessie Dong\\[2pt]
+Stanford University\\[2pt]
+\texttt{jessiedong@stanford.edu}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The extent and severity of wildfire burn scars affect the selection of post-fire erosion control strategies, debris-flow warnings, and reforestation efforts. Burn-severity maps are produced by the Monitoring Trends in Burn Severity (MTBS) program by thresholding the differenced Normalized Burn Ratio (dNBR) at values set by analysts for each fire. Automatic methods are evaluated on unseen fires, over \mFires{} California and Oregon wildfires from \mYearMin--\mYearMax, covering \mAcresM{} million acres and \mPixelsM{} million labeled pixels, and observed in the same Landsat scenes used by MTBS. Evaluation uses five-fold cross-validation, in which each fire, as well as all fires overlapping it, is held out.
+
+The methods compared are dNBR with generic thresholds; dNBR, relativized differenced Normalized Burn Ratio (RdNBR), and relativized Burn Ratio (RBR) with learned thresholds; a per-pixel gradient boosting classifier; and two U-Net variants. Learning thresholds improved mean mIoU from \mdnbrgenericMiou{} to \mdnbrlearnedMiou, and improved \mWinsLearnGen{} of \mFires{} fires. No U-Net outperforms the calibrated dNBR model (the better U-Net reaches \mBestUnetMiou{} vs.\ \mdnbrlearnedMiou, paired difference \mDiffLearned, 95\% CI \mDiffLearnedLo{} to \mDiffLearnedHi). Per-fire calibration using each fire's analyst thresholds further improves mean mIoU to \moracleMiou. The oracle advantage is higher for fires that have analyst thresholds far from the learned thresholds (Spearman $\rho = \aGapRho$).
+
+\aDnbrLearnedAdjShare\% of remaining errors are between adjacent severity classes, and \aDnbrLearnedErrNearShare\% of errors are within 30\,m of a class transition in the MTBS map. We attribute these limitations to per-fire threshold calibration, and conclude that additional spectral or spatial information will add little.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+Burn severity maps are used by land managers to guide control of erosion and debris flows, as well as for reforesting decisions after a major wildfire. In the United States, the Monitoring Trends in Burn Severity (MTBS) program creates severity maps for all fires over 1{,}000 acres in the West \citep{eidenshink2007mtbs}. An analyst creates each map by selecting a pair of pre- and post-fire Landsat images, calculating the differenced Normalized Burn Ratio (dNBR) \citep{key2006landscape}, and setting thresholds to classify pixels into four severity classes.
+
+Many forested fires are assessed with a post-fire image from the following growing season, which MTBS calls an extended assessment. While the MTBS burn severity maps are the reference for the United States, we observe that they rely on analyst judgment. The thresholds chosen by analysts vary widely by fire, e.g.\ the threshold for moderate-to-high severity ranges from \mHighMin{} to \mHighMax{} dNBR units in our data set of \mFires{} fires, always higher than the commonly used generic threshold of 440 (\cref{fig:thresholds}).
+
+In order to automate this process, we need to be able to predict thresholds for a new fire, or to learn a mapping between imagery and burn severity regardless of thresholds. The latter strategy is what deep segmentation models do, leveraging all six Landsat bands as well as the spatial context of a pixel. Models are then evaluated against maps made by analysts in the MTBS program. Note that labels derived from dNBR and generic thresholds are a direct mathematical transformation of the input, so at best, a model will only be able to reproduce them.
+
+For input to our models, we use the exact Landsat images referenced by MTBS records, warped onto the 30\,m grid of the MTBS mosaic so that the labels are never resampled and the inputs approximate the analyst's view. Fires are partitioned to hold out individual fires for testing. Overlapping fires are clustered together and each cluster is assigned to one of five cross-validation folds. For each test fire, a model is trained without any samples from that fire or any overlapping fire, but instead from all other fires. Replacing generic thresholds with those learned from the training fires increases mean mIoU by \mDiffLearnGen{} (95\% CI \mDiffLearnGenLo{} to \mDiffLearnGenHi). Two U-Net variants, one using 12 input reflectance channels and another using 12 reflectance plus 5 index channels, achieve performance matching calibrated dNBR, with differences of \mDiffBandsLearned{} and \mDiffLearned{} respectively, both with confidence intervals including 0.
+
+As a performance benchmark, we evaluate an oracle that uses the thresholds chosen by an MTBS analyst for the test fire. This oracle achieves a score of \moracleMiou. Consistent with our expectation that the oracle's advantage stems from being able to tune to a particular fire, the benefit of the oracle grows with the difference between the analyst's thresholds and the learned thresholds. Looking into where the error lies after the bias of generic thresholds has been removed, we find that the great majority of the residual error is along class boundaries in the MTBS map, where model predictions tend to confuse neighboring classes. An analysis of the Camp Fire (\cref{tab:labels}) further shows that labels generated with generic thresholds are very sensitive to image preprocessing and time of scene acquisition.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/overview.pdf}
+  \caption{The 2018 Camp Fire: Landsat surface reflectance pre- and post-fire (panels a and b, SWIR2, NIR, and red composites from the scenes referenced in the MTBS record), the differenced Normalized Burn Ratio (panel c), and the burn severity map produced by an MTBS analyst using thresholds for this fire (panel d). The white/gray line is the boundary of the MTBS fire, so all pixels inside are labeled. A method takes panels (a) and (b) as input and predicts panel (d).}
+  \label{fig:overview}
+\end{figure}
+
+\section{Problem Formulation}
+\label{sec:problem}
+
+For a fire $f$, we have pre- and post-fire Landsat surface reflectance images $\mathbf{x}^{\text{pre}}_f, \mathbf{x}^{\text{post}}_f \in \mathbb{R}^{6 \times H \times W}$, each with 6 bands, Landsat bands 2--7. Let $\Omega_f$ be the set of valid pixels inside the MTBS fire boundary and $y_f(i)$ be the severity class label of pixel $i$ (0 = unburned, 1 = low, 2 = moderate, 3 = high). The Normalized Burn Ratio (NBR) of an image is defined as
+\begin{equation}
+  \mathrm{NBR} = \frac{\rho_{\text{NIR}} - \rho_{\text{SWIR2}}}{\rho_{\text{NIR}} + \rho_{\text{SWIR2}}},
+\end{equation}
+where $\rho_{\text{NIR}}$ and $\rho_{\text{SWIR2}}$ are the surface reflectances for the OLI bands 5 and 7, respectively. We define the differenced normalized burn ratio for fire $f$ as $\mathrm{dNBR}_f = 1000\,(\mathrm{NBR}^{\text{pre}}_f - \mathrm{NBR}^{\text{post}}_f)$, scaling the burn ratio as in MTBS and \citet{key2006landscape}, from which MTBS labels are obtained by approximately thresholding this index, i.e.,
+\begin{equation}
+  y_f(i) \approx q\big(\mathrm{dNBR}_f(i);\, \boldsymbol{\tau}_f\big), \qquad q(v; \boldsymbol{\tau}) = \sum_{k=1}^{3} \mathbb{1}[v \geq \tau_k].
+  \label{eq:mtbs}
+\end{equation}
+The thresholds $\boldsymbol{\tau}_f \in \mathbb{R}^3$ are chosen by the analyst to obtain labels for fire $f$. We approximate MTBS labels by thresholding dNBR, acknowledging that there are differences in how reflectance is processed and that the MTBS labels are edited by analysts. Our prediction problem is to identify the labels $y_{f^*}$ for an unseen fire $f^*$, based only on the pre- and post-fire imagery $\mathbf{x}^{\text{pre}}_{f^*}$ and $\mathbf{x}^{\text{post}}_{f^*}$. We note two possible strategies for developing predictors based on \cref{eq:mtbs}: (1) assume thresholds are transferable and estimate them from the fires in our training set, or (2) use a deep-learning model to learn a mapping between the reflectance imagery and the burn severity labels. We define a predictor that knows the thresholds $\boldsymbol{\tau}_{f^*}$ as the oracle, which provides an upper reference for the performance of our prediction methods.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.78\linewidth]{figs/thresholds.pdf}
+  \caption{The thresholds chosen by analysts to label dNBR for each of the \mFires{} fires, displayed as columns sorted by their moderate/high threshold. The dashed lines represent standard thresholds of 100, 270, and 440.}
+  \label{fig:thresholds}
+\end{figure}
+
+\section{Data}
+\label{sec:data}
+
+\subsection{Fire Selection}
+Our dataset includes wildfires in the MTBS perimeter dataset that were ignited in California or Oregon in 2018, 2020, or 2021, and that (i) burned at least 60{,}000 acres, (ii) have an extended assessment that includes a post-fire scene in the following growing season, and (iii) use Landsat 8 or 9 imagery for both the pre- and post-fire scenes. This results in \mFires{} fires (see \cref{tab:fires} in \cref{app:fires}) spanning \mAcresM{} million acres, in multiple biogeographic regions in California and Oregon including Sierra Nevada mixed conifer, Klamath Mountains, western Oregon Cascades, Coast Ranges, and southern California chaparral. The labeled pixel counts per fire are between \aPxMin{} and \aPxMax{} million.
+
+\subsection{Imagery}
+We acquire pre- and post-fire scenes from the Landsat Collection~2 Level-2 archive \citep{usgs2026landsatc2} on Microsoft Planetary Computer \citep{planetarycomputer}. For \mSubstituted{} fires the exact post-fire MTBS scene is missing from the archive, so we use the closest Landsat 9 scene from the same path and row, acquired 8 days after the MTBS scene. We convert digital numbers to surface reflectances using the conversion $\rho = 2.75 \times 10^{-5}\,\mathrm{DN} - 0.2$. We bilinearly resample each band to a common 30\,m Albers grid of the MTBS severity mosaic so our labels remain aligned. Using the Level-2 quality band, we exclude pixels marked as fill, cloud, dilated cloud, cirrus, cloud shadow, or snow in either the pre- or post-fire scene.
+
+To test the image registration quality, we apply the analyst threshold values to our locally computed dNBR values and compare the result to the labels in the MTBS map, testing for a shift of one pixel. We find that, for \aAlignShifted{} of the \mFires{} fires (\aAlignShiftedEighteen{} of the \aAlignNEighteen{} from 2018 and none from 2021), the best matching labels are shifted by one pixel from our calculation, with a difference of \aAlignGainMin--\aAlignGainMax{} percentage points. We choose not to correct for this difference, so it applies equally to all of our methods.
+
+\subsection{Labels}
+Labels are obtained by reprocessing the MTBS thematic burn severity mosaics for 2018, 2020, and 2021 \citep{mtbs2024mosaics}, using only the pixels within each fire's perimeter, so that neighboring fires in the mosaic are excluded. We consider the six MTBS classes, but merge two classes (unburned to low and increased greenness) into one class (unburned). We keep three classes (low, moderate, and high burn severity), and we ignore the mask class (non-processing). This results in a total of \mPixelsM{} million labeled pixels, of which \mShareUnburned\%, \mShareLow\%, \mShareModerate\%, and \mShareHigh\% are unburned, low, moderate, and high burn severity, respectively. The proportion of high burn severity pixels varies from \aHighShareMin\% to \aHighShareMax\% among the \mFires{} fires.
+
+\subsection{Analyst Thresholds}
+Each MTBS record stores the dNBR thresholds that the analyst used to construct it. Across all \mFires{} fires, the unburned/low thresholds ranged between \mLowMin{} and \mLowMax, the low/moderate thresholds between \mModMin{} and \mModMax, and the moderate/high thresholds between \mHighMin{} and \mHighMax, as illustrated in \cref{fig:thresholds}. The generic thresholds of 100, 270, and 440 align with the class boundaries identified by \citet{key2006landscape}. In their scheme, the moderate-high class ranges from 440 through 660, and the high class is everything above 660.
+
+\subsection{Cross-Validation by Fire}
+Three pairs of fires in our dataset overlap: the 2020 North Complex Fire burned into the scar of the 2018 Camp Fire, the 2021 McFarland Fire burned into the scar of the 2020 August Complex Fire, and the 2021 Bootleg Fire burned into the scar of the 2018 Watson Creek Fire. We define overlapping fires as those overlapping by more than 1\% of the area of the smaller fire. We used a greedy algorithm to group overlapping fires and distribute the groups among cross-validation folds such that the total burned area of each fold was balanced. Each fold contained between \aFoldFiresMin{} and \aFoldFiresMax{} fires and between \aFoldAcresMin{} and \aFoldAcresMax{} million acres. For each method, we trained the model on four of the folds and evaluated on the remaining fold. The folds were built such that no fire in the held-out fold overlapped with any fire in the training folds.
+
+\section{Methods}
+\label{sec:methods}
+
+We evaluated our methods using two indices in addition to dNBR: the relativized dNBR (RdNBR) of \citet{miller2007rdnbr} and the relativized burn ratio (RBR) of \citet{parks2014rbr}, both scaled by 1000:
+\begin{equation}
+  \mathrm{RdNBR} = \frac{\mathrm{dNBR}}{\sqrt{\max\big(|\mathrm{NBR}^{\text{pre}}|,\, 0.001\big)}}, \qquad
+  \mathrm{RBR} = \frac{\mathrm{dNBR}}{\mathrm{NBR}^{\text{pre}} + 1.001}.
+\end{equation}
+These indices divide dNBR by a function of $\mathrm{NBR}^{\text{pre}}$ so that they are less sensitive to the amount of pre-fire biomass \citep{parks2014rbr}. Note that we constrain the denominator in the first expression to be at least 0.001 to avoid division by near-zero values, and we similarly use an offset of 1.001 in the second expression.
+
+We used the function $q(\cdot; \boldsymbol{\tau})$ in \cref{eq:mtbs} to implement different threshold-based methods using the index as input. For the generic classifier, we used dNBR as input and thresholds $\boldsymbol{\tau} = (100, 270, 440)$. For the learned classifier, we found
+\begin{equation}
+  \hat{\boldsymbol{\tau}} = \arg\max_{\boldsymbol{\tau}} \frac{1}{|\mathcal{F}_{\text{train}}|} \sum_{f \in \mathcal{F}_{\text{train}}} \mathrm{mIoU}_f\big(q(\mathrm{index}_f; \boldsymbol{\tau})\big),
+\end{equation}
+such that the mean mIoU over the training fires was maximized, where for each fire $f$, $\mathrm{mIoU}_f$ is the mean intersection over union as defined in \cref{sec:setup}. The thresholds were found via coordinate search in the space of integers using step sizes of 64, 16, 4, and 1. For this search, we used the histogram of the index values for each class for each fire. Each fire contributed equally to the objective, so that the thresholds were not biased by the largest fires. For the oracle classifier, we used dNBR as input but used the analyst-determined thresholds $\boldsymbol{\tau}_{f^*}$ of the test fire $f^*$. As the oracle relied on test-fire-specific information, we report the oracle results separately as an upper reference on the benefits of per-fire calibration.
+
+For our unsupervised baseline, we smoothed the dNBR image using a Gaussian filter with $\sigma = 1.5$ pixels and then used multi-level Otsu thresholding \citep{otsu1979threshold} to partition the resulting dNBR values into four classes within each fire perimeter. This method does not require labeled data or training fires.
+
+For the supervised baseline, we used a histogram-based gradient boosting classifier \citep{ke2017lightgbm, pedregosa2011sklearn} with 300 iterations, 63 leaves per tree, and class weights proportional to the inverse of the frequency of each class. We trained this model on 60{,}000 labeled pixels sampled uniformly at random from each training fire. Each pixel had 17 features, consisting of 12 reflectance bands and five indices: $\mathrm{NBR}^{\text{pre}}$, $\mathrm{NBR}^{\text{post}}$, dNBR, RdNBR, and RBR. We used this model per pixel without spatial context.
+
+The U-Net \citep{ronneberger2015unet} has four encoder stages with 32, 64, 128, and 256 channels, a bottleneck with 512 channels, transposed convolution upsampling, and skip connections, totaling 7.8M parameters. We consider two variants, one inputting 12 reflectance channels and the other inputting 12 reflectance channels plus the 5 index channels. We divide dNBR, RdNBR, and RBR by 1000; additionally, we clip RdNBR to $[-5, 5]$. We standardize each channel by its statistics on valid pixels in the training fires, and we set masked pixels to 0 for that channel.
+
+We train on $256 \times 256$ patches centered on labeled pixels in each fire, sampling fires with a probability proportional to the square root of their number of labeled pixels. We apply random horizontal flips, random vertical flips, and $90^\circ$ rotations as augmentation. We compute the cross-entropy loss over labeled pixels, using weights inversely proportional to the square root of each class's frequency. We train for 3K steps with a batch size of 16, using the AdamW optimizer \citep{loshchilov2019adamw} with a weight decay of $10^{-4}$ and a one-cycle learning-rate schedule \citep{smith2019superconvergence} with a maximum learning rate of $10^{-3}$. We do not select a model based on held-out data.
+
+For prediction, we apply a $256 \times 256$ sliding window with stride 128 to each fire and average the overlapping windows with a 2D Hann window. We apply reflection padding to ensure every pixel has a prediction. All hyperparameters are listed in \cref{app:impl}.
+
+\section{Experimental Setup}
+\label{sec:setup}
+
+\paragraph{Statistics.}
+We report the intersection over union (IoU) for a fire $f$ and class $c$, calculated as
+\[
+  \mathrm{IoU}_{f,c} = \frac{\mathrm{TP}(f,c)}{\mathrm{TP}(f,c) + \mathrm{FP}(f,c) + \mathrm{FN}(f,c)}
+\]
+over the labeled pixels $\Omega_f$. We then report the fire's mean IoU ($\mathrm{mIoU}_f$), calculated as the average of the per-class IoUs on fire $f$, across classes present in either the label or the prediction. We also report the macro F1 (Macro-F1) score and pixel accuracy. We aggregate results in two ways: averaging over fires (giving each fire equal weight) and computing the pooled mIoU from the sum of the confusion matrices (giving each pixel equal weight). These two statistics differ because fires can vary in the number of labeled pixels by a factor of \aPxRatio.
+
+When comparing two methods $A$ and $B$, we report the mean over fires of the per-fire difference $\mathrm{mIoU}_f(A) - \mathrm{mIoU}_f(B)$, with a 95\% confidence interval calculated over 10K bootstrap resamples of fires \citep{efron1993bootstrap}. The resamples treat fires as the unit of generalization.
+
+Experiments are run on a single Apple M5 Pro laptop with 64\,GB of RAM. The index thresholding and gradient boosting both take minutes on a single CPU. Training each U-Net fold takes about \aMinPerFold{} minutes on the integrated GPU, at \aSecPerStep{} seconds per step, using PyTorch \citep{paszke2019pytorch}.
+
+\section{Results}
+\label{sec:results}
+
+\Cref{tab:main} lists all methods on all metrics, and \cref{fig:summary} shows the mean mIoU across fires with the bootstrap confidence interval.
+
+\input{tables/main}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.66\linewidth]{figs/summary.pdf}
+  \caption{The mean mIoU across the \mFires{} held-out fires, along with 95\% bootstrap confidence intervals based on resampling of the fires.}
+  \label{fig:summary}
+\end{figure}
+
+\paragraph{Calibration.}
+Using the learned thresholds in training fires, the mean mIoU increases from \mdnbrgenericMiou{} to \mdnbrlearnedMiou, a paired mean difference of \mDiffLearnGen, with a 95\% confidence interval of \mDiffLearnGenLo{} to \mDiffLearnGenHi. The increase occurs in \mWinsLearnGen{} of \mFires{} fires. Across folds, the learned thresholds for unburned/low and low/moderate are [\mLearnedLowMin, \mLearnedLowMax] and [\mLearnedModMin, \mLearnedModMax], and for moderate/high they are [\mLearnedHighMin, \mLearnedHighMax] (\cref{tab:learned}). The learned thresholds are close to what analysts typically use. The two highest thresholds are higher than the generic threshold values of 270 and 440. The highest class-specific increase is for moderate severity, whose IoU rises from \mdnbrgenericIouModerate{} to \mdnbrlearnedIouModerate, with the moderate/high threshold being higher than its generic value.
+
+The standard U-Net with 12 reflectance channels and the U-Net with additional index channels have mean mIoUs of \munetBandsMiou{} and \munetIdxMiou, respectively, compared to \mdnbrlearnedMiou{} for dNBR with the learned thresholds. The paired mean difference for the standard U-Net over dNBR is \mDiffBandsLearned, with a 95\% confidence interval of \mDiffBandsLearnedLo{} to \mDiffBandsLearnedHi, and for the U-Net with index channels over dNBR it is \mDiffLearned, with a 95\% confidence interval of \mDiffLearnedLo{} to \mDiffLearnedHi. The U-Nets improve over dNBR in \mWinsBandsLearned{} and \mWinsLearned{} of \mFires{} fires, respectively. Adding index channels to the U-Net changes mIoU by \mDiffIdxBands, with a 95\% confidence interval of \mDiffIdxBandsLo{} to \mDiffIdxBandsHi. The U-Net with index channels is \mDiffGbm{} higher than per-pixel gradient boosting, with a 95\% confidence interval of \mDiffGbmLo{} to \mDiffGbmHi. The U-Nets provide evidence that adding spatial context improves over the context-free classifier, but does not improve on calibrated dNBR.
+
+With learned thresholds, we observe RBR's score of \mrbrlearnedMiou{} outperforming \mrdnbrlearnedMiou{} for RdNBR. The latter has a lower score, in part, because RdNBR is divided by the square root of the pre-fire NBR, making it unstable as the latter approaches zero. This in turn causes its standard deviation across fires to be nearly double that of dNBR (\mrdnbrlearnedMiouSd{} vs.\ \mdnbrlearnedMiouSd). Regardless, the MTBS labels are defined by thresholds on dNBR, and we should expect all other indices to be inherently disadvantaged.
+
+For the unsupervised thresholding method, the Gaussian and multi-Otsu baseline scores a mean mIoU of \motsuMiou{} with the highest standard deviation of \motsuMiouSd{} across fires. In this baseline method, the Otsu thresholds are set by maximizing the between-class variance of the smoothed dNBR histogram for each fire; these optimized thresholds do not necessarily align with the defined severity classes.
+
+In contrast, the oracle scores an mIoU of \moracleMiou, which is \mDiffOracle{} greater than the learned dNBR (95\% CI \mDiffOracleLo{} to \mDiffOracleHi). Across the \mFires{} fires, the oracle is better than learned dNBR for \mWinsOracle{} of the fires. When comparing the oracle advantage against the distance between the analyst thresholds and the fold-learned thresholds, that is, $\sum_k |\tau_{f,k} - \hat{\tau}_k|$, we see a strong correlation (Spearman $\rho = \aGapRho$, $p \aGapP$). Thus, the fires for which the learned thresholds are most unreliable are those in which the analysts deviated most from the typical thresholds, as shown in \cref{fig:calibration}.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.46\linewidth]{figs/calibration_gap.pdf}\hfill
+  \includegraphics[width=0.46\linewidth]{figs/threshold_sweep.pdf}
+  \caption{The left plot shows the oracle's advantage over learned dNBR versus the distance between the analyst and learned thresholds (Spearman $\rho=\aGapRho$). The right plot shows the mean mIoU over all fires as a function of the moderate/high threshold, where the other two thresholds are set to the mean of the learned thresholds, \aSweepLow{} and \aSweepMod, respectively. The curve on the right is averaged over all fires, so it is descriptive of the dataset.}
+  \label{fig:calibration}
+\end{figure}
+
+\Cref{fig:perfire} shows the mIoU of each individual fire: calibrated dNBR and the U-Net produce similar scores, though both are worse than the oracle for most of the fires. The predictions from each method for three of the held-out fires are shown in \cref{fig:maps}.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.62\linewidth]{figs/per_fire.pdf}
+  \caption{Mean intersection-over-union (mIoU) for each method on each held-out fire, ordered by the U-Net score. Gray ticks indicate the oracle performance.}
+  \label{fig:perfire}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/maps.pdf}
+  \caption{Predictions for three held-out fires: Camp, Creek, and Watson Creek. Creek and Watson Creek are the fires where the U-Net achieved its median mIoU and lowest mIoU, respectively. These predictions are made by models trained on the remaining folds. The MTBS perimeter is overlaid in white.}
+  \label{fig:maps}
+\end{figure}
+
+\section{Analysis}
+\label{sec:analysis}
+
+\input{tables/per_class}
+
+For errors made by generic dNBR thresholds, we note that \aDnbrGenericOverShare\% are overpredictions of the severity class with respect to the MTBS labels. This reflects the fact that the generic moderate/high threshold of 440 falls below all of the analyst thresholds. High severity has a \aDnbrGenericRecHigh\% recall but a low precision of \aDnbrGenericPrecHigh\%, and moderate severity has a \aDnbrGenericRecModerate\% recall (\cref{tab:perclass}). By using learned thresholds, we increase the recall for moderate severity to \aDnbrLearnedRecModerate\% and the precision for high severity to \aDnbrLearnedPrecHigh\%, while reducing overpredictions to \aDnbrLearnedOverShare\% of all errors.
+
+For each of the four methods shown in \cref{fig:confusion}, at least \aDnbrGenericAdjShare\% of the errors are between adjacent severity classes. No method confuses unburned and high severity at any measurable rate. The problem then becomes to place boundaries between adjacent classes, which is what the thresholding in \cref{eq:mtbs} does.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/confusion.pdf}
+  \caption{Confusion matrices pooled over all labeled pixels from \mFires{} held-out fires, normalized by MTBS class per row, and expressed in percent. Label U denotes unburned, L low, M moderate, and H high severity.}
+  \label{fig:confusion}
+\end{figure}
+
+We compute the distance from each labeled pixel to the nearest labeled pixel of a different class in the MTBS map. Because the MTBS maps are spatially fragmented, \aBinShareA\% of labeled pixels are at a distance of 30\,m or less from a different class. For learned dNBR, the error rate was \aDnbrLearnedErrNear\% within 30\,m of a transition and \aDnbrLearnedErrFar\% more than 240\,m away from a transition. Thus, \aDnbrLearnedErrNearShare\% of dNBR errors are within 30\,m of a transition (\cref{fig:boundary}). The U-Net model has a similar profile, with error rates of \aUnetBandsIdxErrNear\% and \aUnetBandsIdxErrFar\% within 30\,m and more than 240\,m of a transition, respectively. The median difference between a pixel's dNBR and the nearest analyst threshold is \aThrGapNear{} units for pixels within 30\,m of a transition, and \aThrGapFar{} units beyond 240\,m. Thus, in regions near transitions, small differences between the learned and the analyst thresholds can cause flipped classifications. The spatial context in the U-Net model does not help with these errors.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.56\linewidth]{figs/boundary.pdf}
+  \caption{Pixel error rate as a function of distance to the nearest labeled pixel from another class. The curves for the learned dNBR and U-Net are indistinguishable. \aBinShareA\% of labeled pixels fall within the first distance bin.}
+  \label{fig:boundary}
+\end{figure}
+
+For unburned/low and low/moderate thresholds set to \aSweepLow{} and \aSweepMod{} respectively, the mean mIoU over all fires is maximized at \aSweepBestMiou{} when the moderate/high threshold is set to \aSweepBest. If the moderate/high threshold is 440, the mean mIoU drops to \aSweepAtGeneric{} (\cref{fig:calibration}, right). The mean mIoU is within 0.01 of its maximum for moderate/high thresholds between \aSweepFlatLo{} and \aSweepFlatHi. These are substantially higher than the generic threshold.
+
+When analyst maps are not available, we can produce burn severity labels by applying standard thresholds to dNBR. These labels are based on a deterministic function of the model inputs and are thus sensitive to both preprocessing and the timing of the scene (\cref{tab:labels}). If we apply the generic thresholds to Camp Fire surface reflectance from the MTBS scenes, we obtain a pixel agreement of \mCampGenericPhys\% with the MTBS map, but the resulting labels assign \mCampGenericHigh\% of the area to high severity rather than the \mCampMtbsHigh\% of the MTBS map. If we stretch the individual bands per scene to their 2nd and 98th percentile values, pixel agreement with the MTBS map drops to \mCampStretch\%. If we use Landsat 8 median composites, with a capture window in November or December 2018, a few weeks after the fire, pixel agreement is \mCampCompPhys\% without the stretch and \mCampCompStretch\% with the stretch.
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{tabular}{llcc}
+    \toprule
+    Imagery & Pre $\rightarrow$ post acquisition & Surface reflectance & Percentile stretch \\
+    \midrule
+    MTBS scenes & Jul 2018 $\rightarrow$ Jul 2019 & \mCampGenericPhys & \mCampStretch \\
+    Landsat 8 median composites & Aug--Nov 2018 $\rightarrow$ Nov--Dec 2018 & \mCampCompPhys & \mCampCompStretch \\
+    \bottomrule
+  \end{tabular}
+  \caption{Agreement (\%) with the MTBS map of the Camp Fire. Labels are generated using generic thresholds (100, 270, 440) on dNBR, over labeled pixels within the MTBS perimeter.}
+  \label{tab:labels}
+\end{table}
+
+During training of the 12-band U-Net model, the loss of one fold became NaN after around 2{,}600 steps. The model from this fold then predicts all unburned on the held-out fires, with a mean mIoU of \mBandsFoldFourBefore. We repeat this fold with gradient-norm clipping set to \mBandsClip. This results in a mean mIoU of \mBandsFoldFourAfter{} for this fold, and the other U-Net folds, trained without gradient-norm clipping, are reported unchanged. The U-Net variant with index channels is stable across all folds.
+
+\section{Related Work}
+\label{sec:related}
+
+The Normalized Burn Ratio (NBR) contrasts near-infrared (NIR) reflectance, which is high in healthy vegetation, with shortwave-infrared (SWIR) reflectance, which increases after fire. \citet{key2006landscape} defined the difference in NBR (dNBR) and the field protocol of the Composite Burn Index to calibrate it. \citet{miller2007rdnbr} defined the relativized dNBR (RdNBR) to reduce the pre-fire vegetation bias. \citet{parks2014rbr} proposed the relativized burn ratio (RBR), which better matched field measurements across 18 fires than dNBR and RdNBR. The MTBS project \citep{eidenshink2007mtbs} uses per-fire thresholds of dNBR selected by analysts. Thus, the MTBS maps are a product of the per-fire calibration process, and also the reference standard for burn severity.
+
+The U-Net architecture \citep{ronneberger2015unet} is commonly used for dense prediction tasks in remote sensing. \citet{hu2023burnseverity} trained several U-Net models on labels from MTBS using Landsat data for the contiguous United States, and the attention U-Net was the best of the architectures they evaluated. We compare the U-Net against calibrated index thresholds, evaluated under a leave-one-fire-with-its-neighbors-out protocol, and use an oracle to measure the gain from per-fire calibration.
+
+Otsu's method \citep{otsu1979threshold} selects the threshold values that maximize the between-class variance of a histogram, and thus requires no labels. On the other hand, learned thresholds require labeled data from known fires and are optimized for a specific application, i.e., severity classification.
+
+\section{Discussion and Limitations}
+\label{sec:discussion}
+
+A classifier on dNBR with thresholds learned from previous fires achieves the same accuracy as the U-Net evaluated here. It does so without a GPU and with just three interpretable parameters. The main missing piece for closer agreement with the analyst is per-fire calibration. Solving this problem would require a model to predict fire-dependent thresholds using vegetation, terrain, and imagery. The oracle shows the potential for such a model.
+
+The MTBS burn severity maps were produced using dNBR with analyst-selected thresholds and are hand-corrected. Thus, they represent agreement with an analyst and are by construction biased towards dNBR over other indices. Rather than agreement with an analyst, field measurements would test whether the different methods accurately reflect burn severity on the ground.
+
+The \mFires{} fires observed here are from only two states and three years, and the assignment of each fire to a fold is fixed. The evaluation was limited to one U-Net architecture trained once per fold with one training budget. Larger models, longer training, or pretraining data from other regions may have provided better results. For two of the fires, the post-fire imagery was acquired 8 days after the scene MTBS used. For five fires, the imagery and MTBS labels have up to a 1-pixel offset (\cref{sec:data}). The surface reflectance processing used here is different from that used by MTBS and is a source of error. These factors contribute to the error that remains even for the oracle.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+We studied automated methods of mapping burn severity in \mFires{} wildfires, each held out with its neighboring fires, against MTBS maps made by analysts. A classifier on dNBR with thresholds learned from other fires achieves a mean mIoU of \mdnbrlearnedMiou; two U-Nets achieve the same accuracy. A simple oracle using per-fire thresholds determined by analysts achieves \moracleMiou{} mIoU. The value of the oracle increases as per-fire thresholds diverge from typical thresholds. The errors that remain are mostly due to confusion between adjacent classes at class boundaries. Thus, per-fire calibration of thresholds is the primary obstacle to improved automatic burn severity mapping.
+
+\bibliography{refs}
+\bibliographystyle{plainnat}
+
+\clearpage
+\appendix
+
+\section{Fires}
+\label{app:fires}
+\Cref{tab:fires} lists the \mFires{} fires in our dataset. Px is the number of labeled pixels inside the MTBS perimeter after masking. The columns U, L, M, and H are the fractions of labeled pixels in each of the four classes. The column ``Analyst $\tau$'' lists the dNBR thresholds used by MTBS analysts to define the three class boundaries: unburned/low, low/moderate, and moderate/high. The ``Scenes'' column lists the Landsat Collection~2 Level-2 images used in this study by their sensor name and date of acquisition. For fires marked with a dagger ($\dagger$), the exact post-fire MTBS scene is not available in the source archive. For those fires, we use the closest available Landsat 9 image over the burn area, eight days after the MTBS scene, from the same path and row.
+
+\input{tables/fires}
+
+\section{Implementation Details}
+\label{app:impl}
+
+\Cref{tab:hparams} summarizes the hyperparameters used for our U-Net, gradient boosting, and threshold search algorithms, as well as for the Gaussian and multi-Otsu baseline. \Cref{tab:learned} lists the thresholds for unburned/low, low/moderate, and moderate/high; for each held-out fold, the thresholds are fit on the other four folds. \Cref{fig:train} shows the training loss of each fold for the U-Net experiments, aggregated with a 100-step moving average. For the 12-band variant of fold 4, we had to retrain the model with gradient clipping to achieve convergence.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{ll}
+    \toprule
+    Setting & Value \\
+    \midrule
+    \multicolumn{2}{l}{\emph{U-Net}} \\
+    Encoder channels & 32, 64, 128, 256, bottleneck 512 \\
+    Parameters & 7.8M \\
+    Input channels & 12 (bands) or 17 (bands + indices) \\
+    Patch size, batch size & $256 \times 256$, 16 \\
+    Training steps & 3{,}000, fixed, no early stopping \\
+    Optimizer & AdamW, weight decay $10^{-4}$ \\
+    Learning rate & one-cycle, peak $10^{-3}$, 5\% warm-up \\
+    Class weights & $\propto$ (class frequency)$^{-1/2}$, training fires \\
+    Augmentation & horizontal and vertical flips, $90^\circ$ rotations \\
+    Fire sampling & $\propto$ (labeled pixels)$^{1/2}$ \\
+    Inference & sliding window, stride 128, Hann weighting, reflection padding \\
+    \midrule
+    \multicolumn{2}{l}{\emph{Gradient boosting}} \\
+    Iterations, leaves & 300, 63 \\
+    Learning rate & 0.1 \\
+    Class weights & balanced \\
+    Training pixels & 60{,}000 per training fire \\
+    \midrule
+    \multicolumn{2}{l}{\emph{Threshold search}} \\
+    Objective & mean mIoU over training fires \\
+    Search & coordinate search, steps 64, 16, 4, 1 \\
+    \midrule
+    \multicolumn{2}{l}{\emph{Gaussian + multi-Otsu}} \\
+    Gaussian $\sigma$ & 1.5 pixels \\
+    Otsu classes & 4, fit per fire inside the perimeter \\
+    \bottomrule
+  \end{tabular}
+  \caption{Hyperparameters used for our U-Net, gradient boosting, and threshold search algorithms, as well as for the Gaussian and multi-Otsu baseline.}
+  \label{tab:hparams}
+\end{table}
+
+\input{tables/learned}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{figs/train.pdf}
+  \caption{Training loss of each fold for the U-Net experiments, aggregated with a 100-step moving average. For the 12-band variant of fold 4, the model was retrained with gradient clipping to achieve convergence.}
+  \label{fig:train}
+\end{figure}
+
+\section{Per-Fire Results}
+\Cref{tab:perfire} shows per-fire scores on the mIoU metric, with each fire tested with models trained on the other four cross-validation folds. The ``Fold'' column shows the cross-validation fold in which the fire was tested. The acreages are in thousands.
+
+\input{tables/per_fire}
+
+\section{Reproducibility}
+All code is in the project repository under \texttt{robust/}. The \texttt{fires.py} file contains the code for selecting fires and folds using the MTBS perimeter database. Our \texttt{fetch.py} script contains code for fetching the Landsat scenes and MTBS labels for the experiments. The \texttt{baselines.py} and \texttt{unet.py} scripts contain all of the code for the training and evaluation of all of our methods. The \texttt{report.py} and \texttt{analysis.py} scripts compute all tables, figures, and statistics shown in this report from our saved predictions.
+
+\end{document}

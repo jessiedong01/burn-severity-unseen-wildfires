@@ -1,0 +1,61 @@
+[23:09:27] histograms done
+[23:09:27] fold 0: learned dnbr thresholds (77, 312, 579) (train mean mIoU 0.685)
+[23:09:27] fold 0: learned rdnbr thresholds (123, 471, 816) (train mean mIoU 0.541)
+[23:09:27] fold 0: learned rbr thresholds (58, 226, 390) (train mean mIoU 0.658)
+[23:09:45] fold 0: gbm trained on 1,560,000 pixels
+[23:10:00] fold 0: august_complex_2020 done
+[23:10:01] fold 0: mcfarland_2021 done
+[23:10:02] fold 0: windy_2021 done
+[23:10:03] fold 0: czu_aug_lightning_2020 done
+[23:10:04] fold 0: glass_2020 done
+[23:10:04] fold 1: learned dnbr thresholds (82, 312, 577) (train mean mIoU 0.691)
+[23:10:04] fold 1: learned rdnbr thresholds (122, 468, 809) (train mean mIoU 0.549)
+[23:10:04] fold 1: learned rbr thresholds (59, 224, 387) (train mean mIoU 0.667)
+[23:10:29] fold 1: gbm trained on 1,620,000 pixels
+[23:10:44] fold 1: dixie_2021 done
+[23:10:46] fold 1: castle_2020 done
+[23:10:47] fold 1: archie_creek_2020 done
+[23:10:48] fold 1: knp_complex_2021 done
+[23:10:48] fold 2: learned dnbr thresholds (85, 319, 596) (train mean mIoU 0.700)
+[23:10:48] fold 2: learned rdnbr thresholds (126, 474, 827) (train mean mIoU 0.553)
+[23:10:48] fold 2: learned rbr thresholds (61, 229, 394) (train mean mIoU 0.670)
+[23:10:59] fold 2: gbm trained on 1,380,000 pixels
+[23:11:02] fold 2: bootleg_2021 done
+[23:11:04] fold 2: carr_2018 done
+[23:11:05] fold 2: caldor_2021 done
+[23:11:07] fold 2: klondike_2018 done
+[23:11:08] fold 2: riverside_2020 done
+[23:11:08] fold 2: ferguson_2018 done
+[23:11:09] fold 2: tamarack_2021 done
+[23:11:10] fold 2: watson_creek_2018 done
+[23:11:10] fold 3: learned dnbr thresholds (78, 314, 587) (train mean mIoU 0.694)
+[23:11:10] fold 3: learned rdnbr thresholds (112, 474, 828) (train mean mIoU 0.567)
+[23:11:10] fold 3: learned rbr thresholds (55, 224, 393) (train mean mIoU 0.669)
+[23:11:23] fold 3: gbm trained on 1,440,000 pixels
+[23:11:26] fold 3: north_complex_2020 done
+[23:11:29] fold 3: hennessey_2020 done
+[23:11:30] fold 3: monument_2021 done
+[23:11:32] fold 3: holiday_farm_2020 done
+[23:11:33] fold 3: camp_2018 done
+[23:11:34] fold 3: bobcat_2020 done
+[23:11:35] fold 3: w_5_cold_springs_2020 done
+[23:11:35] fold 4: learned dnbr thresholds (81, 312, 582) (train mean mIoU 0.681)
+[23:11:35] fold 4: learned rdnbr thresholds (123, 471, 820) (train mean mIoU 0.540)
+[23:11:35] fold 4: learned rbr thresholds (59, 227, 391) (train mean mIoU 0.664)
+[23:11:49] fold 4: gbm trained on 1,440,000 pixels
+[23:11:53] fold 4: ranch_2018 done
+[23:11:57] fold 4: creek_2020 done
+[23:11:58] fold 4: haypress_2021 done
+[23:12:01] fold 4: antelope_2021 done
+[23:12:02] fold 4: dolan_2020 done
+[23:12:03] fold 4: mccash_2021 done
+[23:12:04] fold 4: delta_2018 done
+                miou  macro_f1    acc
+method                               
+otsu           0.456     0.611  0.612
+rdnbr_learned  0.547     0.693  0.700
+dnbr_generic   0.564     0.708  0.718
+rbr_learned    0.662     0.793  0.802
+gbm            0.678     0.804  0.814
+dnbr_learned   0.684     0.808  0.820
+oracle         0.735     0.845  0.854

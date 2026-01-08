@@ -1,0 +1,16 @@
+numpy
+pandas
+scipy
+scikit-learn
+scikit-image
+matplotlib
+rasterio
+geopandas
+pyogrio
+shapely
+pystac-client
+planetary-computer
+opencv-python-headless
+torch
+tqdm
+pypdf

@@ -1,0 +1,14 @@
+[22:43:39] ranch_2018: grid 1884x2189 px
+[22:44:49] ranch_2018: 1,919,974 labeled px; unburned/low/mod/high = 14.2% / 36.0% / 33.2% / 16.6%; LC08_L2SP_045033_20170723_02_T1 -> LC08_L2SP_045033_20190814_02_T1
+[22:44:50] hennessey_2020: grid 1476x2685 px
+[22:46:22] hennessey_2020: 1,409,089 labeled px; unburned/low/mod/high = 34.2% / 31.7% / 23.5% / 10.7%; LC08_L2SP_044033_20200708_02_T1 -> LC08_L2SP_044033_20210711_02_T1
+[22:46:22] haypress_2021: grid 1657x1083 px
+[22:47:00] haypress_2021: 857,966 labeled px; unburned/low/mod/high = 16.0% / 38.0% / 25.3% / 20.8%; LC08_L2SP_045031_20200715_02_T1 -> LC08_L2SP_045031_20220721_02_T1
+[22:47:00] camp_2018: grid 1375x1148 px
+[22:47:41] camp_2018: 688,226 labeled px; unburned/low/mod/high = 28.4% / 36.5% / 25.2% / 10.0%; LC08_L2SP_044032_20180719_02_T1 -> LC08_L2SP_044032_20190722_02_T1
+[22:47:41] dolan_2020: grid 1141x1196 px
+[22:48:33] dolan_2020: 556,703 labeled px; unburned/low/mod/high = 9.5% / 22.8% / 33.5% / 34.2%; LC08_L2SP_043035_20200428_02_T1 -> LC08_L2SP_043035_20210501_02_T1
+[22:48:33] ferguson_2018: grid 868x1197 px
+[22:49:10] ferguson_2018: 429,110 labeled px; unburned/low/mod/high = 12.4% / 44.0% / 34.7% / 9.0%; LC08_L2SP_042034_20180705_02_T1 -> LC08_L2SP_042034_20190708_02_T1
+[22:49:10] w_5_cold_springs_2020: grid 1117x1007 px
+[22:49:52] w_5_cold_springs_2020: 374,392 labeled px; unburned/low/mod/high = 19.4% / 61.6% / 16.5% / 2.5%; LC08_L2SP_043032_20200802_02_T1 -> LC08_L2SP_043032_20210805_02_T1

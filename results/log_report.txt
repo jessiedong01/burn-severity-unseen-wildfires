@@ -1,0 +1,12 @@
+                 miou  macro_f1    acc
+method                                
+otsu            0.456     0.611  0.612
+unet_bands      0.537     0.639  0.664
+rdnbr_learned   0.547     0.693  0.700
+dnbr_generic    0.564     0.708  0.718
+rbr_learned     0.662     0.793  0.802
+gbm             0.678     0.804  0.814
+dnbr_learned    0.684     0.808  0.820
+unet_bands_idx  0.686     0.810  0.822
+oracle          0.735     0.845  0.854
+wrote 118 macros
