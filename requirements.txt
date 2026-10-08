@@ -1,0 +1,13 @@
+numpy
+matplotlib
+opencv-python
+scikit-image
+rasterio
+geopandas
+earthengine-api
+geemap
+torch
+torchvision
+scipy
+tqdm
+jupyter

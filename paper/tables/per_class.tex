@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{3.2pt}
+\begin{tabular}{lcccccccccccc}
+\toprule
+ & \multicolumn{3}{c}{Unburned} & \multicolumn{3}{c}{Low} & \multicolumn{3}{c}{Moderate} & \multicolumn{3}{c}{High} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}\cmidrule(lr){11-13}
+Method & P & R & F1 & P & R & F1 & P & R & F1 & P & R & F1 \\
+\midrule
+dNBR, generic & 80.9 & 86.2 & 83.5 & 87.6 & 67.5 & 76.2 & 65.1 & 48.7 & 55.7 & 63.5 & 99.3 & 77.5 \\
+dNBR, learned & 87.3 & 77.8 & 82.3 & 81.0 & 83.9 & 82.4 & 77.4 & 80.5 & 78.9 & 89.1 & 86.7 & 87.9 \\
+U-Net (17 ch.) & 82.0 & 84.0 & 83.0 & 82.5 & 81.2 & 81.8 & 78.7 & 79.0 & 78.9 & 88.3 & 88.4 & 88.3 \\
+Oracle & 91.9 & 80.2 & 85.7 & 84.3 & 84.6 & 84.4 & 80.8 & 83.1 & 81.9 & 89.2 & 93.0 & 91.0 \\
+\bottomrule
+\end{tabular}
+\caption{\textbf{Generic thresholds lose moderate-severity recall to the high class; calibration restores it.} Pooled precision (P), recall (R), and F1 (\%) per class over all labeled pixels of the 31 held-out fires.}
+\label{tab:perclass}
+\end{table}

@@ -1,0 +1,21 @@
+[07:47:59] loaded 31 fires, 12 channels, device mps
+[08:54:43] unet_bands fold 4: step 250/3000 loss 0.7320 (16.00 s/step)
+[09:36:21] unet_bands fold 4: step 500/3000 loss 0.4998 (13.00 s/step)
+[09:37:40] unet_bands fold 4: step 750/3000 loss 0.4595 (8.77 s/step)
+[09:38:58] unet_bands fold 4: step 1000/3000 loss 0.4494 (6.66 s/step)
+[09:40:17] unet_bands fold 4: step 1250/3000 loss 0.4433 (5.39 s/step)
+[09:41:34] unet_bands fold 4: step 1500/3000 loss 0.4254 (4.54 s/step)
+[09:42:51] unet_bands fold 4: step 1750/3000 loss 0.4256 (3.94 s/step)
+[09:44:08] unet_bands fold 4: step 2000/3000 loss 0.4105 (3.48 s/step)
+[09:45:25] unet_bands fold 4: step 2250/3000 loss 0.3970 (3.13 s/step)
+[09:46:43] unet_bands fold 4: step 2500/3000 loss 0.3871 (2.85 s/step)
+[09:48:01] unet_bands fold 4: step 2750/3000 loss 0.3796 (2.62 s/step)
+[09:49:18] unet_bands fold 4: step 3000/3000 loss 0.3745 (2.43 s/step)
+[09:49:19] unet_bands fold 4: ranch_2018 mIoU 0.664
+[09:49:21] unet_bands fold 4: creek_2020 mIoU 0.684
+[09:49:22] unet_bands fold 4: haypress_2021 mIoU 0.662
+[09:49:23] unet_bands fold 4: antelope_2021 mIoU 0.779
+[09:49:23] unet_bands fold 4: dolan_2020 mIoU 0.678
+[09:49:24] unet_bands fold 4: mccash_2021 mIoU 0.694
+[09:49:24] unet_bands fold 4: delta_2018 mIoU 0.639
+[09:49:24] done

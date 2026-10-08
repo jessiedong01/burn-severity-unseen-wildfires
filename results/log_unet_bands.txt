@@ -1,0 +1,93 @@
+[01:03:03] loaded 31 fires, 12 channels, device mps
+[01:05:00] unet_bands fold 0: step 250/3000 loss 0.7902 (0.44 s/step)
+[01:06:48] unet_bands fold 0: step 500/3000 loss 0.4974 (0.44 s/step)
+[01:08:36] unet_bands fold 0: step 750/3000 loss 0.4676 (0.44 s/step)
+[01:10:25] unet_bands fold 0: step 1000/3000 loss 0.4552 (0.44 s/step)
+[01:12:14] unet_bands fold 0: step 1250/3000 loss 0.4512 (0.44 s/step)
+[01:14:02] unet_bands fold 0: step 1500/3000 loss 0.4341 (0.43 s/step)
+[01:15:51] unet_bands fold 0: step 1750/3000 loss 0.4196 (0.43 s/step)
+[01:17:39] unet_bands fold 0: step 2000/3000 loss 0.4168 (0.43 s/step)
+[01:19:28] unet_bands fold 0: step 2250/3000 loss 0.3955 (0.43 s/step)
+[01:21:16] unet_bands fold 0: step 2500/3000 loss 0.3847 (0.43 s/step)
+[01:23:05] unet_bands fold 0: step 2750/3000 loss 0.3812 (0.43 s/step)
+[01:24:54] unet_bands fold 0: step 3000/3000 loss 0.3786 (0.43 s/step)
+[01:25:00] unet_bands fold 0: august_complex_2020 mIoU 0.734
+[01:25:01] unet_bands fold 0: mcfarland_2021 mIoU 0.762
+[01:25:02] unet_bands fold 0: windy_2021 mIoU 0.743
+[01:25:02] unet_bands fold 0: czu_aug_lightning_2020 mIoU 0.701
+[01:25:03] unet_bands fold 0: glass_2020 mIoU 0.677
+[01:26:56] unet_bands fold 1: step 250/3000 loss 0.7366 (0.44 s/step)
+[01:28:45] unet_bands fold 1: step 500/3000 loss 0.4974 (0.44 s/step)
+[01:30:34] unet_bands fold 1: step 750/3000 loss 0.4689 (0.44 s/step)
+[01:32:22] unet_bands fold 1: step 1000/3000 loss 0.4618 (0.44 s/step)
+[01:34:11] unet_bands fold 1: step 1250/3000 loss 0.4380 (0.44 s/step)
+[01:36:00] unet_bands fold 1: step 1500/3000 loss 0.4409 (0.44 s/step)
+[01:37:48] unet_bands fold 1: step 1750/3000 loss 0.4240 (0.44 s/step)
+[01:39:37] unet_bands fold 1: step 2000/3000 loss 0.4115 (0.44 s/step)
+[01:41:26] unet_bands fold 1: step 2250/3000 loss 0.3932 (0.44 s/step)
+[01:43:15] unet_bands fold 1: step 2500/3000 loss 0.3858 (0.44 s/step)
+[01:45:04] unet_bands fold 1: step 2750/3000 loss 0.3789 (0.44 s/step)
+[01:46:54] unet_bands fold 1: step 3000/3000 loss 0.3749 (0.44 s/step)
+[01:47:03] unet_bands fold 1: dixie_2021 mIoU 0.740
+[01:47:04] unet_bands fold 1: castle_2020 mIoU 0.618
+[01:47:05] unet_bands fold 1: archie_creek_2020 mIoU 0.598
+[01:47:05] unet_bands fold 1: knp_complex_2021 mIoU 0.725
+[01:49:01] unet_bands fold 2: step 250/3000 loss 0.7325 (0.44 s/step)
+[01:50:49] unet_bands fold 2: step 500/3000 loss 0.4953 (0.44 s/step)
+[01:52:39] unet_bands fold 2: step 750/3000 loss 0.4516 (0.44 s/step)
+[01:54:28] unet_bands fold 2: step 1000/3000 loss 0.4407 (0.44 s/step)
+[01:56:18] unet_bands fold 2: step 1250/3000 loss 0.4213 (0.44 s/step)
+[01:58:08] unet_bands fold 2: step 1500/3000 loss 0.4115 (0.44 s/step)
+[01:59:57] unet_bands fold 2: step 1750/3000 loss 0.4070 (0.44 s/step)
+[02:01:47] unet_bands fold 2: step 2000/3000 loss 0.3974 (0.44 s/step)
+[02:03:36] unet_bands fold 2: step 2250/3000 loss 0.3877 (0.44 s/step)
+[02:05:25] unet_bands fold 2: step 2500/3000 loss 0.3719 (0.44 s/step)
+[02:07:14] unet_bands fold 2: step 2750/3000 loss 0.3657 (0.44 s/step)
+[02:09:03] unet_bands fold 2: step 3000/3000 loss 0.3624 (0.44 s/step)
+[02:09:06] unet_bands fold 2: bootleg_2021 mIoU 0.657
+[02:09:07] unet_bands fold 2: carr_2018 mIoU 0.624
+[02:09:09] unet_bands fold 2: caldor_2021 mIoU 0.676
+[02:09:10] unet_bands fold 2: klondike_2018 mIoU 0.641
+[02:09:11] unet_bands fold 2: riverside_2020 mIoU 0.758
+[02:09:11] unet_bands fold 2: ferguson_2018 mIoU 0.593
+[02:09:12] unet_bands fold 2: tamarack_2021 mIoU 0.748
+[02:09:12] unet_bands fold 2: watson_creek_2018 mIoU 0.579
+[02:11:09] unet_bands fold 3: step 250/3000 loss 0.7332 (0.44 s/step)
+[02:12:59] unet_bands fold 3: step 500/3000 loss 0.4993 (0.44 s/step)
+[02:14:49] unet_bands fold 3: step 750/3000 loss 0.4580 (0.44 s/step)
+[02:16:39] unet_bands fold 3: step 1000/3000 loss 0.4453 (0.44 s/step)
+[02:18:29] unet_bands fold 3: step 1250/3000 loss 0.4322 (0.44 s/step)
+[02:20:19] unet_bands fold 3: step 1500/3000 loss 0.4270 (0.44 s/step)
+[02:22:09] unet_bands fold 3: step 1750/3000 loss 0.4106 (0.44 s/step)
+[02:23:58] unet_bands fold 3: step 2000/3000 loss 0.3958 (0.44 s/step)
+[02:25:48] unet_bands fold 3: step 2250/3000 loss 0.3876 (0.44 s/step)
+[02:27:37] unet_bands fold 3: step 2500/3000 loss 0.3751 (0.44 s/step)
+[02:29:27] unet_bands fold 3: step 2750/3000 loss 0.3681 (0.44 s/step)
+[02:31:17] unet_bands fold 3: step 3000/3000 loss 0.3679 (0.44 s/step)
+[02:31:19] unet_bands fold 3: north_complex_2020 mIoU 0.708
+[02:31:21] unet_bands fold 3: hennessey_2020 mIoU 0.752
+[02:31:22] unet_bands fold 3: monument_2021 mIoU 0.704
+[02:31:23] unet_bands fold 3: holiday_farm_2020 mIoU 0.751
+[02:31:24] unet_bands fold 3: camp_2018 mIoU 0.658
+[02:31:25] unet_bands fold 3: bobcat_2020 mIoU 0.573
+[02:31:26] unet_bands fold 3: w_5_cold_springs_2020 mIoU 0.674
+[02:33:21] unet_bands fold 4: step 250/3000 loss 0.7336 (0.44 s/step)
+[02:35:10] unet_bands fold 4: step 500/3000 loss 0.4969 (0.44 s/step)
+[02:36:58] unet_bands fold 4: step 750/3000 loss 0.4591 (0.44 s/step)
+[02:38:46] unet_bands fold 4: step 1000/3000 loss 0.4492 (0.44 s/step)
+[02:40:34] unet_bands fold 4: step 1250/3000 loss 0.4413 (0.43 s/step)
+[02:42:21] unet_bands fold 4: step 1500/3000 loss 0.4274 (0.43 s/step)
+[02:44:09] unet_bands fold 4: step 1750/3000 loss 0.4270 (0.43 s/step)
+[02:45:57] unet_bands fold 4: step 2000/3000 loss 0.4073 (0.43 s/step)
+[02:47:43] unet_bands fold 4: step 2250/3000 loss 0.3935 (0.43 s/step)
+[02:49:29] unet_bands fold 4: step 2500/3000 loss 0.3827 (0.43 s/step)
+[02:51:18] unet_bands fold 4: step 2750/3000 loss nan (0.43 s/step)
+[02:53:03] unet_bands fold 4: step 3000/3000 loss nan (0.43 s/step)
+[02:53:06] unet_bands fold 4: ranch_2018 mIoU 0.035
+[02:53:09] unet_bands fold 4: creek_2020 mIoU 0.026
+[02:53:10] unet_bands fold 4: haypress_2021 mIoU 0.040
+[02:53:12] unet_bands fold 4: antelope_2021 mIoU 0.065
+[02:53:13] unet_bands fold 4: dolan_2020 mIoU 0.024
+[02:53:14] unet_bands fold 4: mccash_2021 mIoU 0.036
+[02:53:14] unet_bands fold 4: delta_2018 mIoU 0.010
+[02:53:14] done

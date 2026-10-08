@@ -1,0 +1,16 @@
+[22:43:39] august_complex_2020: grid 2574x4045 px
+[22:46:59] august_complex_2020: 4,800,935 labeled px; unburned/low/mod/high = 16.6% / 29.0% / 27.0% / 27.4%; LC08_L2SP_045032_20200715_02_T1 -> LC08_L2SP_045032_20210718_02_T1
+[22:47:00] creek_2020: grid 1808x2454 px
+[22:48:21] creek_2020: 1,709,767 labeled px; unburned/low/mod/high = 10.4% / 43.2% / 30.4% / 16.0%; LC08_L2SP_042034_20200827_02_T1 -> LC08_L2SP_042034_20210830_02_T1
+[22:48:21] caldor_2021: grid 2377x963 px
+[22:49:03] caldor_2021: 1,018,246 labeled px; unburned/low/mod/high = 18.4% / 27.0% / 24.0% / 30.5%; LC08_L2SP_043033_20210805_02_T1 -> LC08_L2SP_043033_20220723_02_T1
+[22:49:03] castle_2020: grid 1597x1407 px
+[22:49:50] castle_2020: 783,937 labeled px; unburned/low/mod/high = 15.1% / 39.2% / 32.8% / 12.9%; LC08_L2SP_041035_20200804_02_T1 -> LC08_L2SP_041035_20210807_02_T1
+[22:49:50] riverside_2020: grid 1275x1146 px
+[22:50:34] riverside_2020: 618,121 labeled px; unburned/low/mod/high = 13.2% / 30.4% / 19.7% / 36.8%; LC08_L2SP_046029_20190720_02_T1 -> LC08_L2SP_046029_20210725_02_T1
+[22:50:34] bobcat_2020: grid 1261x1264 px
+[22:51:20] bobcat_2020: 520,284 labeled px; unburned/low/mod/high = 14.8% / 41.2% / 33.4% / 10.6%; LC08_L2SP_041036_20200703_02_T1 -> LC08_L2SP_041036_20210706_02_T1
+[22:51:20] knp_complex_2021: grid 849x1327 px
+[22:51:58] knp_complex_2021: 402,737 labeled px; unburned/low/mod/high = 10.0% / 43.1% / 32.8% / 14.1%; LC08_L2SP_042035_20210611_02_T1 -> LC08_L2SP_042035_20220614_02_T1
+[22:51:58] glass_2020: grid 817x1005 px
+[22:53:18] glass_2020: 304,976 labeled px; unburned/low/mod/high = 15.4% / 31.1% / 30.8% / 22.6%; LC08_L2SP_045033_20200715_02_T1 -> LC08_L2SP_045033_20210718_02_T1
