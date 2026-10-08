@@ -142,7 +142,7 @@ Method & P & R & F1 & P & R & F1 & P & R & F1 & P & R & F1 \\
 """ + "\n".join(lines) + r"""
 \bottomrule
 \end{tabular}
-\caption{\textbf{Generic thresholds lose moderate-severity recall to the high class; calibration restores it.} Pooled precision (P), recall (R), and F1 (\%) per class over all labeled pixels of the 31 held-out fires.}
+\caption{\textbf{Generic thresholds lose moderate-severity recall to the high class, and calibration restores it.} Pooled precision (P), recall (R), and F1 (\%) per class over all labeled pixels of the 31 held-out fires.}
 \label{tab:perclass}
 \end{table}
 """)
@@ -203,7 +203,7 @@ Method & P & R & F1 & P & R & F1 & P & R & F1 & P & R & F1 \\
     ax.scatter(dist_thr.loc[gap.index], gap, s=14, color=C_LEARNED, edgecolors="white", linewidths=0.5)
     ax.axhline(0, color=INK2, lw=0.6)
     ax.set_xlabel(r"$\sum_k |\tau^{\mathrm{analyst}}_k - \tau^{\mathrm{learned}}_k|$ (dNBR)")
-    ax.set_ylabel("mIoU: oracle $-$ learned")
+    ax.set_ylabel("Oracle mIoU $-$ learned mIoU")
     ax.grid(color=GRID, lw=0.5); ax.set_axisbelow(True)
     fig.savefig(FIGS / "calibration_gap.pdf"); plt.close(fig)
 
@@ -260,7 +260,7 @@ Fire & Year & Fold & Acres (k) & Px (M) & U / L / M / H (\%) & Analyst $\tau$ & 
 """ + "\n".join(body) + r"""
 \bottomrule
 \end{tabular}
-\caption{\textbf{The 31 fires.} Px: labeled pixels inside the MTBS perimeter after masking. U/L/M/H: share of labeled pixels per class. Analyst $\tau$: MTBS dNBR thresholds (unburned/low, low/moderate, moderate/high). Scenes are Landsat Collection~2 Level-2 (sensor, acquisition date). $^\dagger$The exact MTBS post-fire scene was missing from the archive; we used the closest Landsat 9 scene of the same path and row (8 days later).}
+\caption{\textbf{The 31 fires.} Px is the number of labeled pixels inside the MTBS perimeter after masking. U, L, M, and H give the share of labeled pixels in each class. Analyst $\tau$ lists the MTBS dNBR thresholds (unburned/low, low/moderate, moderate/high). Scenes are Landsat Collection~2 Level-2 (sensor, acquisition date). $^\dagger$The archive does not contain the exact MTBS post-fire scene, and the closest Landsat 9 scene of the same path and row, acquired 8 days later, replaces it.}
 \label{tab:fires}
 \end{table}
 """)

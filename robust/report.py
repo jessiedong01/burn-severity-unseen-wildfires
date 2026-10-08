@@ -32,7 +32,7 @@ LABELS = {
     "gbm": "Per-pixel gradient boosting",
     "unet_bands": "U-Net, 12 bands",
     "unet_bands_idx": "U-Net, 12 bands + indices",
-    "oracle": "Oracle: analyst thresholds",
+    "oracle": "Oracle (analyst thresholds)",
 }
 ORDER = list(LABELS)
 
@@ -136,7 +136,7 @@ Method & mIoU & F1 & Acc. & Pooled & U & L & M & H \\
 """ + "\n".join(lines) + r"""
 \bottomrule
 \end{tabular}
-\caption{\textbf{Calibrated dNBR thresholds and both U-Nets are statistically indistinguishable; all fall short of the analyst's own thresholds.} Results on """ + str(n_fires) + r""" held-out fires (fire-grouped five-fold cross-validation, MTBS labels). mIoU, macro-F1 (F1), and pixel accuracy (Acc.) are averaged over fires ($\pm$ one standard deviation across fires); Pooled is the mIoU of the summed confusion matrices. Per-class IoU (U/L/M/H: unburned, low, moderate, high) is averaged over fires. Bold marks the best non-oracle value. The oracle applies each test fire's own MTBS analyst thresholds and is a reference ceiling.}
+\caption{\textbf{Calibrated dNBR thresholds and both U-Nets are statistically indistinguishable, and all fall short of the analyst's own thresholds.} Results on """ + str(n_fires) + r""" held-out fires (fire-grouped five-fold cross-validation, MTBS labels). mIoU, macro-F1 (F1), and pixel accuracy (Acc.) are averaged over fires ($\pm$ one standard deviation across fires). Pooled is the mIoU of the summed confusion matrices. Per-class IoU is averaged over fires, and U, L, M, and H denote unburned, low, moderate, and high. Bold marks the best non-oracle value. The oracle applies each test fire's own MTBS analyst thresholds and is a reference ceiling.}
 \label{tab:main}
 \end{table}
 """)
@@ -163,7 +163,7 @@ Fire & Fold & Acres (k) & """ + head + r""" \\
 """ + "\n".join(body) + r"""
 \bottomrule
 \end{tabular}
-\caption{\textbf{Per-fire mIoU.} Each fire is scored by models trained on the other four folds. Fold: cross-validation fold in which the fire was tested. Acres in thousands.}
+\caption{\textbf{Per-fire mIoU.} Each fire is scored by models trained on the other four folds. Fold is the cross-validation fold in which the fire was tested. Acres in thousands.}
 \label{tab:perfire}
 \end{table}
 """)
