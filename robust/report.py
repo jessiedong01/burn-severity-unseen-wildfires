@@ -24,7 +24,7 @@ REPORT = ROOT / "paper"
 TABLES, FIGS = REPORT / "tables", REPORT / "figs"
 
 LABELS = {
-    "otsu": "Gaussian + multi-Otsu (original)",
+    "otsu": "Gaussian + multi-Otsu",
     "dnbr_generic": "dNBR, generic thresholds",
     "dnbr_learned": "dNBR, learned thresholds",
     "rdnbr_learned": "RdNBR, learned thresholds",
@@ -366,7 +366,7 @@ def fig_summary(df: pd.DataFrame) -> None:
     ax.set_xlabel("Mean mIoU over held-out fires (95% CI)")
     ax.grid(axis="x", color=GRID, lw=0.5); ax.set_axisbelow(True)
     ax.tick_params(axis="y", length=0)
-    fig.savefig(FIGS / "summary.pdf")
+    fig.savefig(FIGS / "summary.pdf"); fig.savefig(FIGS / "summary.png", dpi=200)
     plt.close(fig)
 
 
