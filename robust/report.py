@@ -45,7 +45,8 @@ SEV_CMAP = ListedColormap(SEV_COLORS + ["#ffffff"])
 SEV_NORM = BoundaryNorm([-0.5, 0.5, 1.5, 2.5, 3.5, 255.5], SEV_CMAP.N)
 
 plt.rcParams.update({
-    "font.family": "sans-serif", "font.sans-serif": ["Helvetica", "Arial", "DejaVu Sans"],
+    "font.family": ["cmr10", "DejaVu Serif"],
+    "mathtext.fontset": "cm", "axes.formatter.use_mathtext": True, "axes.unicode_minus": False,
     "font.size": 8.5, "axes.titlesize": 8.5, "axes.labelsize": 8.5, "legend.fontsize": 7.5,
     "xtick.labelsize": 7, "ytick.labelsize": 7, "axes.linewidth": 0.6,
     "axes.edgecolor": INK2, "xtick.color": INK2, "ytick.color": INK2,
@@ -296,9 +297,9 @@ def fig_thresholds() -> None:
     f = fires_table().sort_values("high_t")
     fig, ax = plt.subplots(figsize=(COL, 2.0))
     x = np.arange(len(f))
-    for col, gen, lab in (("low_t", 100, "Unburned | low"), ("mod_t", 270, "Low | moderate"), ("high_t", 440, "Moderate | high")):
+    for col, gen, lab in (("low_t", 100, "unburned/low"), ("mod_t", 270, "low/moderate"), ("high_t", 440, "moderate/high")):
         ax.scatter(x, f[col], s=10, color=SEV_COLORS[{"low_t": 1, "mod_t": 2, "high_t": 3}[col]],
-                   edgecolors=INK2, linewidths=0.4, zorder=3, label=f"Analyst: {lab}")
+                   edgecolors=INK2, linewidths=0.4, zorder=3, label=f"Analyst, {lab}")
         ax.axhline(gen, color=INK2, lw=0.8, ls=(0, (3, 2)), zorder=1)
         ax.text(len(f) + 0.3, gen, f"generic {gen}", ha="left", va="center", fontsize=6, color=INK2, clip_on=False)
     ax.set_xticks([])

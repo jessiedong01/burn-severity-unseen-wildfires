@@ -40,7 +40,8 @@ INK2, GRID = "#52514e", "#e4e3df"
 BLUES = matplotlib.colors.LinearSegmentedColormap.from_list(
     "seq", ["#ffffff", "#cde2fb", "#86b6ef", "#3987e5", "#1c5cab", "#0d366b"])
 plt.rcParams.update({
-    "font.family": "sans-serif", "font.sans-serif": ["Helvetica", "Arial", "DejaVu Sans"],
+    "font.family": ["cmr10", "DejaVu Serif"],
+    "mathtext.fontset": "cm", "axes.formatter.use_mathtext": True, "axes.unicode_minus": False,
     "font.size": 8.5, "axes.titlesize": 9, "axes.labelsize": 8.5, "legend.fontsize": 7.5,
     "xtick.labelsize": 7.5, "ytick.labelsize": 7.5, "axes.linewidth": 0.6,
     "axes.edgecolor": INK2, "xtick.color": INK2, "ytick.color": INK2,
@@ -174,7 +175,7 @@ Method & P & R & F1 & P & R & F1 & P & R & F1 & P & R & F1 \\
         e = dist_err[meth]; rate = e[:, 0] / e[:, 1]
         ax.plot(x, rate, marker="o", ms=4, lw=1.6, color=COLORS[meth], label=METHODS[meth])
     shares = dist_err["dnbr_learned"][:, 1] / dist_err["dnbr_learned"][:, 1].sum()
-    ax.set_xticks(x, [l.replace("$\\leq$", "≤").replace("$>$", ">").replace("\\,", " ").replace("--", "–") for l in BIN_LABELS], rotation=0)
+    ax.set_xticks(x, [l.replace("\\,", " ").replace("--", "–") for l in BIN_LABELS], rotation=0)
     ax.set_xlabel("Distance to nearest pixel of another MTBS class")
     ax.set_ylabel("Pixel error rate")
     ax.yaxis.set_major_formatter(matplotlib.ticker.PercentFormatter(1.0, decimals=0))

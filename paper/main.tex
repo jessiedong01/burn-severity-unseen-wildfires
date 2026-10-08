@@ -19,7 +19,7 @@
 \input{numbers}
 \input{numbers_analysis}
 
-\title{Burn Severity Mapping on Unseen Wildfires:\\Calibrated Spectral Indices versus Deep Segmentation}
+\title{Calibrated dNBR Thresholds Match a U-Net\\for Burn Severity Mapping on Unseen Wildfires}
 
 \author{Jessie Dong\\[2pt]
 Stanford University\\[2pt]
@@ -91,7 +91,8 @@ The Normalized Burn Ratio of an image is
 \begin{equation}
   \mathrm{NBR} = \frac{\rho_{\text{NIR}} - \rho_{\text{SWIR2}}}{\rho_{\text{NIR}} + \rho_{\text{SWIR2}}},
 \end{equation}
-and $\mathrm{dNBR}_f = 1000\,(\mathrm{NBR}^{\text{pre}}_f - \mathrm{NBR}^{\text{post}}_f)$.
+where $\rho_{\text{NIR}}$ and $\rho_{\text{SWIR2}}$ are surface reflectance in the near-infrared and second shortwave-infrared bands (OLI bands 5 and 7).
+The differenced index is $\mathrm{dNBR}_f = 1000\,(\mathrm{NBR}^{\text{pre}}_f - \mathrm{NBR}^{\text{post}}_f)$, scaled by 1000 as in MTBS and \citet{key2006landscape}.
 MTBS produces labels approximately as
 \begin{equation}
   y_f(i) \approx q\big(\mathrm{dNBR}_f(i);\, \boldsymbol{\tau}_f\big), \qquad q(v; \boldsymbol{\tau}) = \sum_{k=1}^{3} \mathbb{1}[v \geq \tau_k],
@@ -157,10 +158,11 @@ Every method is trained on four folds and evaluated on the fifth.
 \paragraph{Spectral indices.}
 Two relativized indices complement dNBR, the relativized dNBR \citep{miller2007rdnbr} and the relativized burn ratio \citep{parks2014rbr}, both scaled by 1000,
 \begin{equation}
-  \mathrm{RdNBR} = \frac{\mathrm{dNBR}}{\sqrt{|\mathrm{NBR}^{\text{pre}}|}}, \qquad
+  \mathrm{RdNBR} = \frac{\mathrm{dNBR}}{\sqrt{\max\big(|\mathrm{NBR}^{\text{pre}}|,\, 0.001\big)}}, \qquad
   \mathrm{RBR} = \frac{\mathrm{dNBR}}{\mathrm{NBR}^{\text{pre}} + 1.001}.
 \end{equation}
-Both normalize dNBR by pre-fire vegetation, which reduces the dependence of dNBR on pre-fire biomass.
+Both divide dNBR by a function of pre-fire NBR, which reduces the dependence of dNBR on pre-fire biomass.
+The floor of 0.001 in the RdNBR denominator and the offset of 1.001 in the RBR denominator prevent division by values near zero.
 
 \paragraph{Index thresholding.}
 Each threshold classifier applies $q(\cdot; \boldsymbol{\tau})$ from \cref{eq:mtbs} to one index.
