@@ -1,4 +1,4 @@
-# Per-Fire Threshold Calibration Limits Automated Burn Severity Mapping on Unseen Wildfires
+# Per-Fire Threshold Calibration Limits Burn Severity Mapping on Unseen Wildfires
 
 Jessie Dong, Stanford University
 
@@ -82,7 +82,7 @@ cd paper && tectonic -X compile main.tex
 
 ```bibtex
 @misc{dong2026burnseverity,
-  title  = {Per-Fire Threshold Calibration Limits Automated Burn Severity Mapping on Unseen Wildfires},
+  title  = {Per-Fire Threshold Calibration Limits Burn Severity Mapping on Unseen Wildfires},
   author = {Jessie Dong},
   year   = {2026},
   url    = {https://github.com/jessiedong01/burn-severity-unseen-wildfires}
