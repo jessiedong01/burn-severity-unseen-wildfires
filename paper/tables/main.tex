@@ -20,6 +20,6 @@ U-Net, 12 bands + indices & \textbf{0.686\,{\scriptsize$\pm$0.057}} & \textbf{0.
 Oracle (analyst thresholds) & 0.735\,{\scriptsize$\pm$0.043} & 0.845 & 0.854 & 0.752 & 0.702 & 0.736 & 0.693 & 0.808 \\
 \bottomrule
 \end{tabular}
-\caption{Results on 31 held-out fires (fire-grouped five-fold cross-validation, MTBS labels). mIoU, macro-F1 (F1), and pixel accuracy (Acc.) are averaged over fires ($\pm$ one standard deviation across fires). Pooled is the mIoU of the summed confusion matrices. Per-class IoU is averaged over fires, and U, L, M, and H denote unburned, low, moderate, and high. Bold marks the best non-oracle value. The oracle applies each test fire's own MTBS analyst thresholds and is a reference ceiling.}
+\caption{Results on 31 held-out fires under fire-grouped five-fold cross-validation against MTBS labels, where mIoU, macro-F1 (F1), and pixel accuracy (Acc.) are averaged over fires with one standard deviation across fires ($\pm$), Pooled gives the mIoU of the summed confusion matrices, and per-class IoU is averaged over fires for the unburned (U), low (L), moderate (M), and high (H) classes. Bold marks the best value among methods trained only on other fires, and the oracle, which applies each test fire's own MTBS analyst thresholds, is listed separately as an upper reference.}
 \label{tab:main}
 \end{table}

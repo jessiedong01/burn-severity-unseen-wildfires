@@ -261,7 +261,7 @@ Fire & Year & Fold & Acres (k) & Px (M) & U / L / M / H (\%) & Analyst $\tau$ & 
 """ + "\n".join(body) + r"""
 \bottomrule
 \end{tabular}
-\caption{The 31 fires in the dataset. Px is the number of labeled pixels inside the MTBS perimeter after masking. U, L, M, and H give the share of labeled pixels in each class. Analyst $\tau$ lists the MTBS dNBR thresholds (unburned/low, low/moderate, moderate/high). Scenes are Landsat Collection~2 Level-2 (sensor, acquisition date). $^\dagger$The archive does not contain the exact MTBS post-fire scene, and the closest Landsat 9 scene of the same path and row, acquired 8 days later, replaces it.}
+\caption{The 31 fires in the dataset, where Px is the number of labeled pixels inside the MTBS perimeter after masking, U, L, M, and H give the share of labeled pixels in each class, Analyst $\tau$ lists the MTBS dNBR thresholds for unburned/low, low/moderate, and moderate/high, and scenes are Landsat Collection~2 Level-2 with sensor and acquisition date. $^\dagger$For these fires the archive does not contain the exact MTBS post-fire scene, so the closest Landsat 9 scene of the same path and row, acquired 8 days later, is used in its place.}
 \label{tab:fires}
 \end{table}
 """)
@@ -286,7 +286,7 @@ Held-out fold & dNBR & RdNBR & RBR \\
 """ + "\n".join(rows) + r"""
 \bottomrule
 \end{tabular}
-\caption{Thresholds (unburned/low, low/moderate, moderate/high) fit on the four training folds for each held-out fold.}
+\caption{Thresholds for unburned/low, low/moderate, and moderate/high fit on the four training folds for each held-out fold.}
 \label{tab:learned}
 \end{table}
 """)

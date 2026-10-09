@@ -137,7 +137,7 @@ Method & mIoU & F1 & Acc. & Pooled & U & L & M & H \\
 """ + "\n".join(lines) + r"""
 \bottomrule
 \end{tabular}
-\caption{Results on """ + str(n_fires) + r""" held-out fires (fire-grouped five-fold cross-validation, MTBS labels). mIoU, macro-F1 (F1), and pixel accuracy (Acc.) are averaged over fires ($\pm$ one standard deviation across fires). Pooled is the mIoU of the summed confusion matrices. Per-class IoU is averaged over fires, and U, L, M, and H denote unburned, low, moderate, and high. Bold marks the best non-oracle value. The oracle applies each test fire's own MTBS analyst thresholds and is a reference ceiling.}
+\caption{Results on """ + str(n_fires) + r""" held-out fires under fire-grouped five-fold cross-validation against MTBS labels, where mIoU, macro-F1 (F1), and pixel accuracy (Acc.) are averaged over fires with one standard deviation across fires ($\pm$), Pooled gives the mIoU of the summed confusion matrices, and per-class IoU is averaged over fires for the unburned (U), low (L), moderate (M), and high (H) classes. Bold marks the best value among methods trained only on other fires, and the oracle, which applies each test fire's own MTBS analyst thresholds, is listed separately as an upper reference.}
 \label{tab:main}
 \end{table}
 """)
@@ -164,7 +164,7 @@ Fire & Fold & Acres (k) & """ + head + r""" \\
 """ + "\n".join(body) + r"""
 \bottomrule
 \end{tabular}
-\caption{Per-fire mIoU. Each fire is scored by models trained on the other four folds. Fold is the cross-validation fold in which the fire was tested. Acres in thousands.}
+\caption{Per-fire mIoU, where each fire is scored by models trained on the other four folds, Fold gives the cross-validation fold in which the fire was tested, and acres are given in thousands.}
 \label{tab:perfire}
 \end{table}
 """)
