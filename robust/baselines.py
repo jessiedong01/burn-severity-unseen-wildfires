@@ -1,8 +1,8 @@
 """
 Non-deep baselines, evaluated with the same fire-grouped 5-fold split as the U-Net.
 
-  otsu            the original pipeline: Gaussian (sigma 1.5) + 4-class multi-Otsu on dNBR, per fire
-  dnbr_generic    dNBR with the generic thresholds 100 / 270 / 440 (as in the original project)
+  otsu            Gaussian smoothing (sigma 1.5) + 4-class multi-Otsu on dNBR, per fire
+  dnbr_generic    dNBR with the generic thresholds 100 / 270 / 440
   dnbr_learned    dNBR thresholds fit on the training fires
   rdnbr_learned   RdNBR thresholds fit on the training fires
   rbr_learned     RBR thresholds fit on the training fires
@@ -25,7 +25,7 @@ from sklearn.ensemble import HistGradientBoostingClassifier
 
 from robust.common import IGNORE, RESULTS, confusion, fires_table, indices, load_fire, scores
 
-GENERIC = {"dnbr": (100, 270, 440)}  # Key and Benson (2006) class edges used by the original project
+GENERIC = {"dnbr": (100, 270, 440)}  # Key and Benson (2006) class edges
 SEARCH_START = {"dnbr": (100, 270, 440), "rdnbr": (100, 300, 600), "rbr": (100, 270, 440)}
 GRID = {"dnbr": (-500, 1500), "rdnbr": (-1000, 3000), "rbr": (-400, 1200)}  # histogram range, 1-unit bins
 GBM_SAMPLES_PER_FIRE = 60_000

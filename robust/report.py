@@ -137,7 +137,7 @@ Method & mIoU & F1 & Acc. & Pooled & U & L & M & H \\
 """ + "\n".join(lines) + r"""
 \bottomrule
 \end{tabular}
-\caption{\textbf{Calibrated dNBR thresholds and both U-Nets are statistically indistinguishable, and all fall short of the analyst's own thresholds.} Results on """ + str(n_fires) + r""" held-out fires (fire-grouped five-fold cross-validation, MTBS labels). mIoU, macro-F1 (F1), and pixel accuracy (Acc.) are averaged over fires ($\pm$ one standard deviation across fires). Pooled is the mIoU of the summed confusion matrices. Per-class IoU is averaged over fires, and U, L, M, and H denote unburned, low, moderate, and high. Bold marks the best non-oracle value. The oracle applies each test fire's own MTBS analyst thresholds and is a reference ceiling.}
+\caption{Results on """ + str(n_fires) + r""" held-out fires (fire-grouped five-fold cross-validation, MTBS labels). mIoU, macro-F1 (F1), and pixel accuracy (Acc.) are averaged over fires ($\pm$ one standard deviation across fires). Pooled is the mIoU of the summed confusion matrices. Per-class IoU is averaged over fires, and U, L, M, and H denote unburned, low, moderate, and high. Bold marks the best non-oracle value. The oracle applies each test fire's own MTBS analyst thresholds and is a reference ceiling.}
 \label{tab:main}
 \end{table}
 """)
@@ -164,7 +164,7 @@ Fire & Fold & Acres (k) & """ + head + r""" \\
 """ + "\n".join(body) + r"""
 \bottomrule
 \end{tabular}
-\caption{\textbf{Per-fire mIoU.} Each fire is scored by models trained on the other four folds. Fold is the cross-validation fold in which the fire was tested. Acres in thousands.}
+\caption{Per-fire mIoU. Each fire is scored by models trained on the other four folds. Fold is the cross-validation fold in which the fire was tested. Acres in thousands.}
 \label{tab:perfire}
 \end{table}
 """)
@@ -402,46 +402,43 @@ def data_numbers() -> None:
     for c, v in zip(CLASSES, counts / counts.sum()):
         macro(f"mShare{c.title()}", f"{100 * v:.1f}")
     macro("mSubstituted", subs)
-    macro("mCampOrigAgree", camp_original_agreement())
+    camp_label_agreement()
     macro("mYearMin", f.year.min()); macro("mYearMax", f.year.max())
 
 
-def camp_original_agreement() -> str:
-    """Agreement between the first version's Camp Fire labels and the MTBS map,
-    over labeled pixels inside the MTBS perimeter (nearest-neighbour reprojection)."""
+def camp_label_agreement() -> None:
+    """Agreement with the Camp Fire MTBS map of labels made by applying the generic
+    dNBR thresholds, for two image sources (the MTBS scenes, and Landsat 8 median
+    composites from gee/export_camp_fire.js) and two reflectance scalings."""
     import rasterio
     from affine import Affine
     from rasterio.warp import Resampling, reproject
-    orig = ROOT / "outputs" / "camp_fire" / "labels_usgs.tif"
     d = np.load(DATA / "fires" / "camp_2018.npz")
     lab = d["label"]
-    dst = np.full(lab.shape, IGNORE, dtype=np.uint8)
-    with rasterio.open(orig) as src:
-        reproject(src.read(1).astype(np.uint8), dst, src_transform=src.transform, src_crs=src.crs,
-                  dst_transform=Affine(*d["transform"]), dst_crs=str(d["crs"]),
-                  resampling=Resampling.nearest, dst_nodata=IGNORE, src_nodata=None)
-    m = (lab != IGNORE) & (dst != IGNORE)
-    macro("mCampOrigHigh", f"{100 * np.mean(dst[m] == 3):.0f}")
-    macro("mCampMtbsHigh", f"{100 * np.mean(lab[m] == 3):.0f}")
-    macro("mCampOrigModAsHigh", f"{100 * np.mean(dst[m][lab[m] == 2] == 3):.0f}")
-    pre, post = d["pre"].astype(np.float32), d["post"].astype(np.float32)
-    nbr = lambda x: (x[3] - x[5]) / (x[3] + x[5] + 1e-6)
-    generic = np.digitize((nbr(pre) - nbr(post)) * 1000, [100, 270, 440])
     k = lab != IGNORE
-    macro("mCampGenericPhys", f"{100 * np.mean(generic[k] == lab[k]):.1f}")
+    nbr = lambda x: (x[3] - x[5]) / (x[3] + x[5] + 1e-6)
 
-    def stretch(img):  # the first version's per-scene 2nd-98th percentile stretch
+    def stretch(img):  # per-scene 2nd-98th percentile stretch of each band
         lo = np.nanpercentile(img, 2, axis=(1, 2))[:, None, None]
         hi = np.nanpercentile(img, 98, axis=(1, 2))[:, None, None]
         return np.clip((img - lo) / (hi - lo + 1e-8), 0, 1)
 
-    def agree(a, b):
+    def generic(a, b):
         x = (nbr(a) - nbr(b)) * 1000
         ok = k & np.isfinite(x)
-        return 100 * np.mean(np.digitize(x[ok], [100, 270, 440]) == lab[ok])
+        return np.digitize(x[ok], [100, 270, 440]), lab[ok]
 
-    macro("mCampStretch", f"{agree(stretch(pre), stretch(post)):.1f}")
-    # the first version's own post-fire composites (Nov-Dec 2018), as surface reflectance
+    def agree(a, b):
+        pred, ref = generic(a, b)
+        return f"{100 * np.mean(pred == ref):.1f}"
+
+    pre, post = d["pre"].astype(np.float32), d["post"].astype(np.float32)
+    macro("mCampGenericPhys", agree(pre, post))
+    macro("mCampStretch", agree(stretch(pre), stretch(post)))
+    pred, ref = generic(pre, post)
+    macro("mCampGenericHigh", f"{100 * np.mean(pred == 3):.0f}")
+    macro("mCampMtbsHigh", f"{100 * np.mean(ref == 3):.0f}")
+
     imgs = []
     for name in ("pre", "post"):
         with rasterio.open(ROOT / "data" / "raw" / f"camp_fire_{name}_2018.tif") as src:
@@ -452,8 +449,8 @@ def camp_original_agreement() -> str:
                           dst_transform=Affine(*d["transform"]), dst_crs=str(d["crs"]),
                           resampling=Resampling.bilinear, src_nodata=np.nan, dst_nodata=np.nan)
         imgs.append(out)
-    macro("mCampOrigScenes", f"{agree(*imgs):.1f}")
-    return f"{100 * np.mean(dst[m] == lab[m]):.1f}"
+    macro("mCampCompPhys", agree(*imgs))
+    macro("mCampCompStretch", agree(stretch(imgs[0]), stretch(imgs[1])))
 
 
 def main() -> None:

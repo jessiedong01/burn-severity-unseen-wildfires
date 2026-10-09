@@ -143,7 +143,7 @@ Method & P & R & F1 & P & R & F1 & P & R & F1 & P & R & F1 \\
 """ + "\n".join(lines) + r"""
 \bottomrule
 \end{tabular}
-\caption{\textbf{Generic thresholds lose moderate-severity recall to the high class, and calibration restores it.} Pooled precision (P), recall (R), and F1 (\%) per class over all labeled pixels of the 31 held-out fires.}
+\caption{Pooled precision (P), recall (R), and F1 (\%) per class over all labeled pixels of the 31 held-out fires.}
 \label{tab:perclass}
 \end{table}
 """)
@@ -261,7 +261,7 @@ Fire & Year & Fold & Acres (k) & Px (M) & U / L / M / H (\%) & Analyst $\tau$ & 
 """ + "\n".join(body) + r"""
 \bottomrule
 \end{tabular}
-\caption{\textbf{The 31 fires.} Px is the number of labeled pixels inside the MTBS perimeter after masking. U, L, M, and H give the share of labeled pixels in each class. Analyst $\tau$ lists the MTBS dNBR thresholds (unburned/low, low/moderate, moderate/high). Scenes are Landsat Collection~2 Level-2 (sensor, acquisition date). $^\dagger$The archive does not contain the exact MTBS post-fire scene, and the closest Landsat 9 scene of the same path and row, acquired 8 days later, replaces it.}
+\caption{The 31 fires in the dataset. Px is the number of labeled pixels inside the MTBS perimeter after masking. U, L, M, and H give the share of labeled pixels in each class. Analyst $\tau$ lists the MTBS dNBR thresholds (unburned/low, low/moderate, moderate/high). Scenes are Landsat Collection~2 Level-2 (sensor, acquisition date). $^\dagger$The archive does not contain the exact MTBS post-fire scene, and the closest Landsat 9 scene of the same path and row, acquired 8 days later, replaces it.}
 \label{tab:fires}
 \end{table}
 """)
@@ -286,7 +286,7 @@ Held-out fold & dNBR & RdNBR & RBR \\
 """ + "\n".join(rows) + r"""
 \bottomrule
 \end{tabular}
-\caption{\textbf{Learned thresholds are stable across folds.} Thresholds (unburned/low, low/moderate, moderate/high) fit on the four training folds for each held-out fold.}
+\caption{Thresholds (unburned/low, low/moderate, moderate/high) fit on the four training folds for each held-out fold.}
 \label{tab:learned}
 \end{table}
 """)

@@ -32,7 +32,7 @@ def log(msg):
     print(f"[{time.strftime('%H:%M:%S')}] {msg}", flush=True)
 
 
-# ── Model (same architecture as the original project) ────────────────────────
+# ── Model ────────────────────────
 
 class DoubleConv(nn.Module):
     def __init__(self, cin, cout):
