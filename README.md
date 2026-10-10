@@ -1,7 +1,5 @@
 # Per-Fire Threshold Calibration Limits Burn Severity Mapping on Unseen Wildfires
 
-Jessie Dong, Stanford University
-
 [Paper (PDF)](paper/main.pdf)
 
 Burn severity maps guide post-fire erosion control, debris-flow warnings, and reforestation. In the United States, the Monitoring Trends in Burn Severity (MTBS) program produces these maps by thresholding the differenced Normalized Burn Ratio (dNBR), with thresholds chosen by an analyst for each fire. The evaluation here scores automatic methods on how closely they reproduce MTBS maps on fires excluded from training.
@@ -77,14 +75,3 @@ cd paper && tectonic -X compile main.tex
 ```
 
 `robust/run_all.sh` runs the same steps and skips finished ones. Fold 4 of the 12-band U-Net was retrained with `--folds 4 --clip 1.0` after its loss became undefined, as reported in the paper.
-
-## Citation
-
-```bibtex
-@misc{dong2026burnseverity,
-  title  = {Per-Fire Threshold Calibration Limits Burn Severity Mapping on Unseen Wildfires},
-  author = {Jessie Dong},
-  year   = {2026},
-  url    = {https://github.com/jessiedong01/burn-severity-unseen-wildfires}
-}
-```
